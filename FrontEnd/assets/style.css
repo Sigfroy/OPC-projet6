@@ -28,6 +28,7 @@ article, aside, details, figcaption, figure,
 footer, header, hgroup, menu, nav, section {
 	display: block;
 }
+
 body {
 	line-height: 1;
 }
@@ -48,18 +49,27 @@ table {
 }
 /** end reset css**/
 body {
-	max-width: 1140px;
+	max-width: 1440px;
+	background-color: #FFFEF8;
 	margin:auto;
 	font-family: 'Work Sans' ;
 	font-size: 14px;
 }
+
 header {
 	display: flex;
+	max-width: 1140px;
 	justify-content: space-between;
-	margin: 50px 0
+	margin: 50px 150px;
 }
+
 section {
-	margin: 50px 0
+	margin: 55px 0;
+}
+
+main {
+	max-width: 1000px;
+	margin: auto;
 }
 
 h1{
@@ -84,6 +94,9 @@ h2{
 	font-size: 30px;
 	color: #1D6154
 }
+
+
+
 nav ul {
 	display: flex;
 	align-items: center;
@@ -95,35 +108,48 @@ nav li {
 	font-size: 1.2em;
 }
 
-li:hover {
+nav li:hover {
 	color: #B1663C;
+	cursor: pointer;
 }
+
 #introduction {
 	display: flex;
 	align-items: center;
+	padding-bottom: 55px;
 }
 #introduction figure {
-	flex: 1
+	flex: 1;
+	
 }
 #introduction img {
 	display: block;
-	margin: auto;
-	width: 80%;
+	width: 474px;
+	height: 355px;
 }
 
 #introduction article {
-	flex: 1
+	flex: 1;
+	margin-left: 70px
 }
+
 #introduction h2 {
 	margin-bottom: 1em;
 }
 
 #introduction p {
 	margin-bottom: 0.5em;
+	width: 404px;
+	color: #3D3D3D;
+	font-family: Work Sans;
+	font-size: 14px;
+	font-style: normal;
+	font-weight: 400;
+	line-height: normal;
+
 }
 #portfolio h2 {
 	text-align: center;
-	margin-bottom: 1em;
 }
 .gallery {
 	width: 100%;
@@ -131,6 +157,7 @@ li:hover {
 	grid-template-columns: 1fr 1fr 1fr;
 	grid-column-gap: 20px;
 	grid-row-gap: 20px;
+	padding-bottom: 79px;
 }
 
 .gallery img {
@@ -139,7 +166,7 @@ li:hover {
 }
 #contact {
 	width: 50%;
-margin: auto;
+	margin: auto;
 }
 #contact > * {
 	text-align: center;
@@ -183,6 +210,159 @@ input[type="submit"]{
 footer nav ul {
 	display: flex;
 	justify-content: flex-end;
-	margin: 2em
+	margin: 2em;
+	color: #000;
+	font-family: Work Sans;
+	font-size: 14px;
+	font-style: normal;
+	font-weight: 300;
+	line-height: normal;
+	}
+
+/* Ajouté par Kevin */
+
+
+
+nav a {
+	text-decoration: none;
+	color: black;
 }
 
+.navHeader{
+	width: 260px;
+}
+
+.divBarreNoir{
+	width: 1440px;
+	height: 59px;
+	background-color: black;
+}
+
+.barreNoir {
+	max-width: 1440px;
+	height: 59px;
+	background: black;
+	color:  #FFFFFF;
+	font-size: 16px;
+	display: flex;
+	justify-content: center;
+    align-items: center;
+	gap: 21px;
+}
+
+.barreNoirIcon {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	height: 59px;
+	gap: 10px;
+}
+
+#login {
+	margin: 0;
+}
+
+#logout {
+	margin-left: -15px;
+}
+
+.btn {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	background-color: white;
+	color: black;
+	border-radius: 60px;
+	padding: 10px 20px 10px 20px;
+	margin-left: 10px;
+	width: 216px;
+	height: 38px;
+}
+
+.btnModifier{
+	gap: 10px
+}
+
+.btnModifier:hover {
+	color: #B1663C;
+	cursor: pointer;
+}
+
+.btn:hover {
+	color: #B1663C;
+	cursor: pointer;
+}
+
+.filters {
+	display: flex;
+	justify-content: center;
+	gap: 10px;
+	
+}
+
+.filter {
+	display: inline-flex;
+	justify-content:center;
+	flex-shrink: 1;
+	font-family: Syne;
+	font-size: 16px;
+	font-weight: 700;
+	margin-top: 50px;
+	margin-bottom: 50px;
+	color: #1D6154;
+	padding: 8px 20px 8px 20px;
+	border: 1px solid #1D6154;
+	border-radius: 60px;
+	background-color: transparent;
+}
+
+.couleur-inversee {
+	display: inline-flex;
+	justify-content:center;
+	flex-shrink: 1;
+	font-family: Syne;
+	font-size: 16px;
+	font-weight: 700;
+	margin-top: 50px;
+	margin-bottom: 50px;
+	color: #fff;
+	padding: 8px 20px 8px 20px;
+	border: 1px solid #1D6154;
+	border-radius: 60px;
+	background-color:  #1D6154;
+}
+
+.add-photo {
+	display: inline-flex;
+	justify-content:center;
+	flex-shrink: 1;
+	font-family: Syne;
+	font-size: 16px;
+	font-weight: 700;
+	margin-top: 38px;
+	margin-bottom: 32px;
+	color: white;
+	padding: 8px 20px 8px 20px;
+	border: 1px solid #1D6154;
+	border-radius: 60px;
+	background-color: #1D6154;
+	text-align: center;
+}
+
+.figcaptionIndex{
+	padding: 8px 0 0 0 
+}
+
+.filter:hover {
+	cursor: pointer;
+}
+
+.modifier-projet-container-two {
+	display: flex;
+	justify-content: center;
+	margin: 10px 0 40px 0;
+}
+
+.modifier-projet-container-two i {
+	margin-left: 30px;
+}
