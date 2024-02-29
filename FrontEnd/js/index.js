@@ -1,5 +1,5 @@
 /*
- * Effectue une requête pour récupérer la liste des projets et les catégories depuis l'API.
+Effectue une requête pour récupérer la liste des projets et les catégories depuis l'API.
  */
 const apiWorks = fetch('http://localhost:5678/api/works');
 const categories = fetch('http://localhost:5678/api/categories');
@@ -10,7 +10,7 @@ const buttonFiltre = document.querySelector('.button');
 let allWorks = []; // Stocke la liste complète des projets récupérée depuis l'API.
 
 /*
- * Traite la réponse de la requête vers l'API des projets.
+Traite la réponse de la requête vers l'API des projets.
  */
 apiWorks.then(async (responseApiWorks) => {
     if (!responseApiWorks.ok) {
@@ -28,8 +28,8 @@ apiWorks.then(async (responseApiWorks) => {
 });
 
 /*
- * Traite la réponse de la requête vers l'API des catégories.
- * Crée les boutons de filtres et la classe active.
+Traite la réponse de la requête vers l'API des catégories.
+Crée les boutons de filtres et la classe active.
  */
 categories.then(async (responseCategories) => {
     if (!responseCategories.ok) {
@@ -84,3 +84,22 @@ categories.then(async (responseCategories) => {
         console.error("Les catégories n'ont pas été trouvées.");
     }
 });
+
+/*
+Affiche les projets dans la galerie.
+ */
+function displayWorks(works) {
+    gallery.innerHTML = '';
+
+    works.forEach((work) => {
+        const figureElement = createFigureElement(work);
+        gallery.appendChild(figureElement);
+    });
+}
+
+/*
+Filtrer les projets par catégorie.
+ */
+function filterWorksByCategory(category) {
+    return allWorks.filter((work) => work.categoryId === category.id);
+}
