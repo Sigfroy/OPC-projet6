@@ -203,3 +203,70 @@ function formValide() {
 // Ajoute un écouteur d'événement au formulaire pour vérifier la validité en temps réel.
 formulaire.addEventListener('input', formValide);
 
+// AJOUT DE PROJET AU BACKEND
+const category = document.getElementById('modal-photo-category');
+const title = document.getElementById('modal-photo-title');
+const image = document.querySelector('input[type=file]');
+const token = sessionStorage.getItem('Token');
+
+// Ajoute un écouteur d'événement à la soumission du formulaire pour empêcher le comportement par défaut,
+// puis appelle la fonction addProject avec l'événement et le jeton d'authentification.
+formulaire.addEventListener('submit', (event) => {
+    event.preventDefault();
+    addProject(event, token);
+});
+
+// Fonction asynchrone pour ajouter un projet, appelée lors de la soumission du formulaire.
+async function addProject(event, token) {
+    event.preventDefault();
+
+    if (!title.value.trim() || !category.value || !image.files[0]) {
+        alert('Veuillez remplir tous les champs');
+        return;
+    }
+
+    const formData = new FormData();
+    formData.append('title', title.value);
+    formData.append('category', category.value);
+    formData.append('image', image.files[0]);
+
+    try {
+        const response = await fetch('http://localhost:5678/api/works/', {
+            method: 'POST',
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+            body: formData,
+        });
+
+        if (response.ok) {
+            const responseData = await response.json();
+
+            const figure = createFigureElement(responseData);
+            const gallery = document.querySelector('.gallery');
+            gallery.appendChild(figure);
+
+            const figureModal = createFigureModal(responseData);
+            galleryModal.appendChild(figureModal);
+
+            const deleteIcon = figureModal.querySelector('.delete-icone');
+            deleteIcon.addEventListener('click', () => {
+                deleteProjectConfirm(responseData.id);
+            });
+
+            modal.style.display = 'flex';
+            modalPhoto.style.display = 'none';
+
+            resetImage();
+            title.value = '';
+            category.value = '';
+            buttonValidePhoto.style.backgroundColor = '';
+
+            window.alert('Projet ajouté avec succès');
+        }
+    } catch (error) {
+        console.error(error);
+    }
+}
+
+
