@@ -10,6 +10,25 @@ const buttonFiltre = document.querySelector('.button');
 let allWorks = []; // Stocke la liste complète des projets récupérée depuis l'API.
 
 /*
+Crée un élément figure HTML (figure, img et figcaption) pour un projet donné.
+ */
+function createFigureElement(work) {
+    const figureElement = document.createElement('figure');
+    figureElement.setAttribute('data-id', work.id);
+
+    const imageElement = document.createElement('img');
+    imageElement.src = work.imageUrl;
+
+    const titleElement = document.createElement('figcaption');
+    titleElement.textContent = work.title;
+
+    figureElement.appendChild(imageElement);
+    figureElement.appendChild(titleElement);
+
+    return figureElement;
+}
+
+/*
 Traite la réponse de la requête vers l'API des projets.
  */
 apiWorks.then(async (responseApiWorks) => {
