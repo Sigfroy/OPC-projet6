@@ -122,3 +122,39 @@ Filtrer les projets par catégorie.
 function filterWorksByCategory(category) {
     return allWorks.filter((work) => work.categoryId === category.id);
 }
+
+// PARTIE EDITION
+
+// Éléments HTML liés à l'administration.
+const admin = document.getElementById('admin');      // Conteneur pour la partie administration.
+const login = document.getElementById('login');      // Bouton de connexion.
+const logout = document.getElementById('logout');    // Bouton de déconnexion.
+const modify = document.getElementById('modify');    // Bouton de modification.
+const header = document.getElementById('header');    // En-tête.
+
+// Vérifie si l'utilisateur est connecté en utilisant les informations de session.
+if (JSON.parse(sessionStorage.getItem('connected'))) {
+    // Si connecté, affiche les éléments liés à l'administration et au mode édition.
+    login.style.display = 'none';
+    logout.style.display = 'block';
+    admin.style.display = 'flex';
+    modify.style.display = 'inline-block';
+    header.style.marginTop = '100px';
+} else {
+    // Si non connecté, affiche uniquement le bouton de connexion.
+    login.style.display = 'block';
+    logout.style.display = 'none';
+    admin.style.display = 'none';
+    modify.style.display = 'none';
+}
+
+// Ajoute un écouteur d'événement au bouton de déconnexion.
+logout.addEventListener('click', (event) => {
+    // Empêche le comportement par défaut du bouton de déconnexion.
+    event.preventDefault();
+
+    // Supprime les informations de session et redirige vers la page d'accueil.
+    sessionStorage.removeItem('Token');
+    sessionStorage.removeItem('connected');
+    window.location.replace('index.html');
+});
