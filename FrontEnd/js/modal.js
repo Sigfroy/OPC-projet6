@@ -103,3 +103,103 @@ modalReturn.addEventListener('click', () => {
     title.value = '';
     category.value = '';
 });
+
+// FORMULAIRE AJOUT DE PROJET
+const inputImage = document.getElementById('input-image');
+const labelImage = document.getElementById('label-image');
+const pImage = document.querySelector('.p-image');
+const photoImage = document.getElementById('photo-image');
+const photoContainer = document.getElementById('photo-container');
+const originalChildren = Array.from(photoContainer.children);
+const maxSize = 4 * 1024 * 1024;
+
+// Réinitialise la gestion des images en rétablissant l'affichage des éléments originaux et en réinitialisant le conteneur d'image.
+function resetImage() {
+    labelImage.style.display = '';
+    pImage.style.display = '';
+    photoImage.style.display = '';
+    photoContainer.innerHTML = '';
+
+    for (const child of originalChildren) {
+        photoContainer.appendChild(child);
+    }
+    inputImage.value = '';
+}
+
+// Écouteur d'événement au champ de téléchargement d'image (affiche l'aperçu de l'image sélectionnée, vérifie la taille, et ajoute un bouton de réinitialisation).
+inputImage.addEventListener('change', function () {
+    const selectedImage = inputImage.files[0];
+
+    photoContainer.innerHTML = '';
+
+    if (selectedImage) {
+        if (selectedImage.size > maxSize) {
+            alert("La taille de l'image dépasse 4 Mo. Veuillez choisir une image plus petite.");
+            resetImage();
+            return;
+        }
+
+        const imgPreview = document.createElement('img');
+        imgPreview.src = URL.createObjectURL(selectedImage);
+
+        imgPreview.style.maxHeight = '100%';
+        imgPreview.style.width = 'auto';
+        imgPreview.style.position = 'relative';
+
+        photoContainer.appendChild(imgPreview);
+
+        const resetButton = document.createElement('button');
+        resetButton.textContent = 'X';
+
+        resetButton.style.position = 'absolute';
+        resetButton.style.top = '120px';
+        resetButton.style.right = '110px';
+        resetButton.style.backgroundColor = 'transparent';
+        resetButton.style.border = 'none';
+        resetButton.style.fontSize = '15px';
+        resetButton.style.cursor = 'pointer';
+
+        resetButton.addEventListener('click', resetImage);
+
+        photoContainer.appendChild(resetButton);
+    }
+});
+
+// Requête l'API pour obtenir la liste des catégories, crée les options et les labels, attribue un ID.
+const reponseCategory = fetch('http://localhost:5678/api/categories')
+    .then((response) => response.json())
+    .then((data) => {
+        data.forEach((category) => {
+            const categoryOption = document.createElement('option');
+            const categoryLabel = document.createElement('label');
+
+            categoryOption.setAttribute('value', category.id);
+            categoryLabel.innerHTML = category.name;
+
+            modalPhotoCategory.appendChild(categoryOption);
+            categoryOption.appendChild(categoryLabel);
+        });
+    });
+
+// VALIDATION FORMULAIRE
+const buttonValidePhoto = document.getElementById('valide-photo');
+const modalPhotoTitle = document.getElementById('modal-photo-title');
+const modalPhotoCategory = document.getElementById('modal-photo-category');
+const formulaire = document.getElementById('form-project');
+
+// Vérifie si le formulaire est valide en fonction des champs remplis et change la couleur de fond du bouton de validation en conséquence.
+function formValide() {
+    if (
+        modalPhotoTitle.value.trim() !== '' &&
+        modalPhotoCategory.value !== '' &&
+        inputImage.value !== ''
+    ) {
+        buttonValidePhoto.style.backgroundColor = '#1D6154';
+    } else {
+        buttonValidePhoto.style.backgroundColor = '';
+    }
+}
+
+// Ajoute un écouteur d'événement au formulaire pour vérifier la validité en temps réel.
+formulaire.addEventListener('input', formValide);
+
