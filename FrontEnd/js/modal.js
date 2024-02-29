@@ -269,4 +269,48 @@ async function addProject(event, token) {
     }
 }
 
+// SUPPRESSION DE PROJET
+// Fonction asynchrone pour supprimer un projet.
+async function deleteProject(id, token) {
+    try {
+        const response = await fetch(`http://localhost:5678/api/works/${id}`, {
+            method: 'DELETE',
+            headers: {
+                accept: '*/*',
+                Authorization: `Bearer ${token}`,
+            },
+        });
+
+        if (response.ok) {
+            window.alert('Projet supprimé avec succès');
+        }
+    } catch (error) {
+        console.error('Erreur lors de la suppression du projet :', error);
+    }
+}
+
+// Fonction pour confirmer la suppression d'un projet.
+// Suppression de la galerie de la page index et de la modale.
+function deleteProjectConfirm(id) {
+    const confirmation = confirm(
+        'Êtes-vous sûr de vouloir supprimer ce projet ?'
+    );
+    if (confirmation) {
+        deleteProject(id, token);
+
+        const figureToDelete = document.querySelector(`[data-id="${id}"]`);
+        if (figureToDelete) {
+            figureToDelete.remove();
+        }
+
+        const figureModalToDelete = document.querySelector(
+            `.gallery-modal [data-id="${id}"]`
+        );
+        if (figureModalToDelete) {
+            figureModalToDelete.remove();
+        }
+    }
+}
+
+
 
