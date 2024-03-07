@@ -1,3 +1,30 @@
+document.addEventListener('DOMContentLoaded', function () {
+    // Ajoutez la balise <aside> et son contenu directement depuis le JavaScript
+    const modalContainerHTML = `
+        <aside id="modal-container">
+            <div class="overlay"></div>
+            <div id="modal">
+                <h2>Galerie photo</h2>
+                <div class="gallery-modal"></div>
+                <button id="modal-close"><i class="fa-solid fa-xmark"></i></button>
+                <button type="button" id="add-photo">Ajouter une photo</button>
+            </div>
+            <div id="modal-photo">
+                <h2>Ajout photo</h2>
+                <form enctype="multipart/form-data" method="POST" id="form-project">
+                    <!-- Votre contenu pour la modale d'ajout de photo -->
+                </form>
+                <button id="modal-photo-close"><i class="fa-solid fa-xmark"></i></button>
+                <button id="modal-return"><i class="fa-solid fa-arrow-left"></i></button>
+            </div>
+        </aside>
+    `;
+
+    // Insérez la balise <aside> directement après le body
+    document.body.insertAdjacentHTML('afterbegin', modalContainerHTML);
+
+});
+
 /*
 Effectue une requête pour récupérer la liste des projets et les catégories depuis l'API.
  */
@@ -8,6 +35,7 @@ const portfolio = document.getElementById('portfolio');
 const buttonFiltre = document.querySelector('.button');
 
 let allWorks = []; // Stocke la liste complète des projets récupérée depuis l'API.
+
 
 /*
 Crée un élément figure HTML (figure, img et figcaption) pour un projet donné.
@@ -131,6 +159,38 @@ const login = document.getElementById('login');      // Bouton de connexion.
 const logout = document.getElementById('logout');    // Bouton de déconnexion.
 const modify = document.getElementById('modify');    // Bouton de modification.
 const header = document.getElementById('header');    // En-tête.
+
+// Ajoutez un écouteur au bouton de modification pour afficher la modale principale et masquer la modale d'ajout de projet.
+modify.addEventListener('click', () => {
+    // Assurez-vous que les sélecteurs de la modale et du conteneur sont corrects
+    const modalContainer = document.getElementById('modal-container');
+    const modalPhoto = document.getElementById('modal-photo');
+    const galleryModal = document.querySelector('.gallery-modal');
+
+    // Affiche la modale principale et masque la modale d'ajout de projet
+    modalContainer.style.display = 'block';
+    modalPhoto.style.display = 'none';
+
+    // Efface le contenu actuel de la galerie modal
+    galleryModal.innerHTML = '';
+
+    // Charge dynamiquement les images des projets dans la galerie modal
+    allWorks.forEach((work) => {
+        const figureModal = createFigureModal(work);
+        galleryModal.appendChild(figureModal);
+    });
+
+// Ajoutez un écouteur au bouton de fermeture de la modale principale
+const modalClose = document.getElementById('modal-close');
+modalClose.addEventListener('click', () => {
+    const modalContainer = document.getElementById('modal-container');
+    modalContainer.style.display = 'none';
+});
+
+    
+});
+
+
 
 // Vérifie si l'utilisateur est connecté en utilisant les informations de session.
 if (JSON.parse(sessionStorage.getItem('connected'))) {
