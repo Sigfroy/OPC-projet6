@@ -72,14 +72,23 @@ document.addEventListener('DOMContentLoaded', function() {
     const modalPhotoCloseButton = document.getElementById('modal-photo-close');
     // Associer un événement de clic au bouton pour fermer toutes les modales
     modalPhotoCloseButton.addEventListener('click', closeAllModals);
+
+    // Sélection de l'élément bouton pour retourner à la première modale
+    const modalReturnButton = document.getElementById('modal-return');
+    // Associer un événement de clic au bouton pour retourner à la première modale
+    modalReturnButton.addEventListener('click', returnToFirstModal);
 });
 
-// Fonction pour fermer toutes les modales
+/// Fonction pour fermer toutes les modales
 function closeAllModals() {
-    const modalPhoto = document.getElementById('modal-photo');
-    const modal = document.getElementById('modal');
-    modalPhoto.style.display = 'none'; // Masquer la modal-photo
-    modal.style.display = 'none'; // Masquer la modal principale
+    const modalContainer = document.getElementById('modal-container');
+    modalContainer.style.display = 'none'; // Masquer le conteneur de la modal
+}
+
+// Fonction pour retourner à la première modale
+function returnToFirstModal() {
+    const modalContainer = document.getElementById('modal-container');
+    modalContainer.style.display = 'block'; // Afficher le conteneur de la modal
 }
 
 let apiWorksModal = fetch('http://localhost:5678/api/works');
@@ -119,6 +128,64 @@ const addPhotoButton = document.getElementById('add-photo');
 // Sélection de la première modale et de la deuxième modale
 const modal = document.getElementById('modal');
 const modalPhoto = document.getElementById('modal-photo');
+
+// Sélection de l'élément de la liste déroulante des catégories
+const categorySelect = document.getElementById('modal-photo-category');
+
+
+// Fonction pour mettre à jour les options de la liste déroulante avec les catégories récupérées depuis l'API
+function updateCategories(categories) {
+    // Effacer les options existantes
+    categorySelect.innerHTML = '';
+
+    // Ajouter une option vide par défaut
+    const defaultOption = document.createElement('option');
+    defaultOption.value = '';
+    defaultOption.textContent = '';
+    categorySelect.appendChild(defaultOption);
+
+    // Ajouter les options des catégories
+    categories.forEach(category => {
+        const option = document.createElement('option');
+        option.value = category.id;
+        option.textContent = category.name;
+        categorySelect.appendChild(option);
+    });
+}
+
+// Effectuer une requête vers l'API pour récupérer les catégories
+fetch('http://localhost:5678/api/categories')
+    .then(response => response.json())
+    .then(data => {
+        // Mettre à jour les options de la liste déroulante avec les catégories récupérées
+        updateCategories(data);
+    })
+    .catch(error => console.error('Une erreur s\'est produite lors de la récupération des catégories :', error));
+
+
+// Sélection de l'élément input type "file"
+const inputImage = document.getElementById('input-image');
+
+// Sélection de l'élément image pour la prévisualisation
+const previewImage = document.getElementById('photo-image');
+
+// Ajout d'un événement de clic au label pour déclencher le clic sur l'input type "file"
+document.getElementById('label-image').addEventListener('click', () => {
+    inputImage.click();
+});
+
+// Ajout d'un événement "change" à l'input type "file"
+inputImage.addEventListener('change', () => {
+    const file = inputImage.files[0]; // Récupération du fichier sélectionné
+    if (file) {
+        // Création d'une URL temporaires pour le fichier sélectionné
+        const imageURL = URL.createObjectURL(file);
+        // Attribution de l'URL à la source de l'image pour la prévisualisation
+        previewImage.src = imageURL;
+    }
+});
+
+
 
 
 
