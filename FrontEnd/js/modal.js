@@ -85,11 +85,22 @@ function closeAllModals() {
     modalContainer.style.display = 'none'; // Masquer le conteneur de la modal
 }
 
-// Fonction pour retourner à la première modale
+// Sélection de l'élément bouton pour retourner à la première modale
+const modalReturnButton = document.getElementById('modal-return');
+// Associer un événement de clic au bouton pour retourner à la première modale
+modalReturnButton.addEventListener('click', returnToFirstModal);
+
+/// Fonction pour retourner à la première modale
 function returnToFirstModal() {
     const modalContainer = document.getElementById('modal-container');
+    const modal = document.getElementById('modal');
+    const modalPhoto = document.getElementById('modal-photo');
     modalContainer.style.display = 'block'; // Afficher le conteneur de la modal
+    modal.style.display = 'block'; // Afficher la première modal
+    modalPhoto.style.display = 'none'; // Masquer la deuxième modal
 }
+
+
 
 let apiWorksModal = fetch('http://localhost:5678/api/works');
 const galleryModal = document.querySelector('.gallery-modal');
@@ -163,27 +174,57 @@ fetch('http://localhost:5678/api/categories')
     .catch(error => console.error('Une erreur s\'est produite lors de la récupération des catégories :', error));
 
 
-// Sélection de l'élément input type "file"
+// FORMULAIRE AJOUT DE PHOTO
+
+// Sélection des éléments du formulaire
 const inputImage = document.getElementById('input-image');
+const photoContainer = document.getElementById('photo-container');
+const modalPhotoCategory = document.getElementById('modal-photo-category');
 
-// Sélection de l'élément image pour la prévisualisation
-const previewImage = document.getElementById('photo-image');
+// Fonction pour réinitialiser l'image sélectionnée
+function resetImage() {
+    inputImage.value = ''; // Effacer la valeur de l'input file
+    photoContainer.innerHTML = ''; // Effacer le contenu du conteneur de l'image
+}
 
-// Ajout d'un événement de clic au label pour déclencher le clic sur l'input type "file"
-document.getElementById('label-image').addEventListener('click', () => {
-    inputImage.click();
-});
+// Écouter les changements dans l'input file
+inputImage.addEventListener('change', function () {
+    const selectedImage = inputImage.files[0]; // Récupérer l'image sélectionnée
 
-// Ajout d'un événement "change" à l'input type "file"
-inputImage.addEventListener('change', () => {
-    const file = inputImage.files[0]; // Récupération du fichier sélectionné
-    if (file) {
-        // Création d'une URL temporaires pour le fichier sélectionné
-        const imageURL = URL.createObjectURL(file);
-        // Attribution de l'URL à la source de l'image pour la prévisualisation
-        previewImage.src = imageURL;
+    // Effacer le contenu du conteneur de l'image
+    photoContainer.innerHTML = '';
+
+    if (selectedImage) {
+        // Créer un élément img pour prévisualiser l'image sélectionnée
+        const imgPreview = document.createElement('img');
+        imgPreview.src = URL.createObjectURL(selectedImage);
+        imgPreview.style.maxHeight = '100%';
+        imgPreview.style.width = 'auto';
+        
+        // Ajouter l'image prévisualisée au conteneur de l'image
+        photoContainer.appendChild(imgPreview);
     }
 });
+
+// Récupérer les catégories depuis l'API et les ajouter au formulaire
+fetch('http://localhost:5678/api/categories')
+    .then((response) => response.json())
+    .then((categories) => {
+        // Parcourir les catégories et les ajouter au menu déroulant
+        categories.forEach((category) => {
+            const option = document.createElement('option');
+            option.value = category.id;
+            option.textContent = category.name;
+            modalPhotoCategory.appendChild(option);
+        });
+    })
+    .catch((error) => {
+        console.error('Une erreur s\'est produite lors de la récupération des catégories :', error);
+    });
+
+
+
+
 
 
 
@@ -332,84 +373,7 @@ inputImage.addEventListener('change', () => {
 //     category.value = '';
 // });
 
-// // FORMULAIRE AJOUT DE PROJET
 
-// const inputImage = document.getElementById('input-image');
-// const labelImage = document.getElementById('label-image');
-// const pImage = document.querySelector('.p-image');
-// const photoImage = document.getElementById('photo-image');
-// const photoContainer = document.getElementById('photo-container');
-// const originalChildren = Array.from(photoContainer.children);
-// const maxSize = 4 * 1024 * 1024;
-
-
-// function resetImage() {
-//     labelImage.style.display = '';
-//     pImage.style.display = '';
-//     photoImage.style.display = '';
-//     photoContainer.innerHTML = '';
-
-//     for (const child of originalChildren) {
-//         photoContainer.appendChild(child);
-//     }
-//     inputImage.value = '';
-// }
-
-// inputImage.addEventListener('change', function () {
-//     const selectedImage = inputImage.files[0];
-
-//     photoContainer.innerHTML = '';
-
-//     if (selectedImage) {
-//         if (selectedImage.size > maxSize) {
-//             alert(
-//                 "La taille de l'image dépasse 4 Mo. Veuillez choisir une image plus petite."
-//             );
-//             resetImage();
-//             return;
-//         }
-
-//         const imgPreview = document.createElement('img');
-//         imgPreview.src = URL.createObjectURL(selectedImage);
-
-//         imgPreview.style.maxHeight = '100%';
-//         imgPreview.style.width = 'auto';
-//         imgPreview.style.position = 'relative';
-
-//         photoContainer.appendChild(imgPreview);
-
-//         const resetButton = document.createElement('button');
-//         resetButton.textContent = 'X';
-
-//         resetButton.style.position = 'absolute';
-//         resetButton.style.top = '120px';
-//         resetButton.style.right = '110px';
-//         resetButton.style.backgroundColor = 'transparent';
-//         resetButton.style.border = 'none';
-//         resetButton.style.fontSize = '15px';
-//         resetButton.style.cursor = 'pointer';
-
-//         resetButton.addEventListener('click', resetImage);
-
-//         photoContainer.appendChild(resetButton);
-//     }
-// });
-
-
-// const reponseCategory = fetch('http://localhost:5678/api/categories')
-//     .then((response) => response.json())
-//     .then((data) => {
-//         data.forEach((category) => {
-//             const categoryOption = document.createElement('option');
-//             const categoryLabel = document.createElement('label');
-
-//             categoryOption.setAttribute('value', category.id);
-//             categoryLabel.innerHTML = category.name;
-
-//             modalPhotoCategory.appendChild(categoryOption);
-//             categoryOption.appendChild(categoryLabel);
-//         });
-//     });
 
 // // VALIDATION FORMULAIRE
 
