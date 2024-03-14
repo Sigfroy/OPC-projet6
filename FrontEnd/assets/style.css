@@ -361,6 +361,21 @@ footer nav ul {
 	display: none;
 }
 
+#edition {
+	cursor: pointer;
+	margin-left: 20px;
+	border: none;
+	background-color: transparent;
+	font-size: 14px;
+	position: relative;
+	bottom: 3px;
+	color: white;
+}
+
+#edition i {
+	margin-right: 15px;
+}
+
 #modify {
 	cursor: pointer;
 	margin-left: 20px;

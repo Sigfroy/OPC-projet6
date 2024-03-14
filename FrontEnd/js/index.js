@@ -1,29 +1,35 @@
-document.addEventListener('DOMContentLoaded', function () {
-    // Ajoutez la balise <aside> et son contenu directement depuis le JavaScript
-    const modalContainerHTML = `
-        <aside id="modal-container">
-            <div class="overlay"></div>
-            <div id="modal">
-                <h2>Galerie photo</h2>
-                <div class="gallery-modal"></div>
-                <button id="modal-close"><i class="fa-solid fa-xmark"></i></button>
-                <button type="button" id="add-photo">Ajouter une photo</button>
-            </div>
-            <div id="modal-photo">
-                <h2>Ajout photo</h2>
-                <form enctype="multipart/form-data" method="POST" id="form-project">
-                    <!-- Votre contenu pour la modale d'ajout de photo -->
-                </form>
-                <button id="modal-photo-close"><i class="fa-solid fa-xmark"></i></button>
-                <button id="modal-return"><i class="fa-solid fa-arrow-left"></i></button>
-            </div>
-        </aside>
-    `;
+    // // Gestionnaire d'événements pour le bouton "Ajouter une photo" dans la modale existante
+    // document.getElementById('add-photo').addEventListener('click', function () {
+    //     console.log("clique ajout photo")
+    //     // Cache la modale existante
+    //     document.getElementById('modal-photo').style.display = 'block';
+    //     // Crée un nouvel élément div pour la nouvelle modale
+    //     const modalAddPhoto = document.createElement('div');
+    //     modalAddPhoto.id = 'modal-add-photo';
+    //     modalAddPhoto.style.display = 'block';
 
-    // Insérez la balise <aside> directement après le body
-    document.body.insertAdjacentHTML('afterbegin', modalContainerHTML);
+    // //     // Ajoute la nouvelle modale au body
+    //     document.body.appendChild(modalAddPhoto);
 
-});
+    //     // Ajoute un gestionnaire d'événements pour le bouton de fermeture de la nouvelle modale
+    //     document.getElementById('modal-photo-close-add').addEventListener('click', function () {
+    //         // Supprime la nouvelle modale du DOM
+    //         document.body.removeChild(modalAddPhoto);
+
+    //         // Affiche la modale existante
+    //         document.getElementById('modal-photo').style.display = 'block';
+    //     });
+    // }); 
+
+
+const adminSectionHTML = `
+    <section id="admin">
+        <button id="edition"><i class="fa-regular fa-pen-to-square"></i>Modifier</button>
+    </section>
+`;
+
+// Insérez la section admin directement après le body
+document.body.insertAdjacentHTML('afterbegin', adminSectionHTML);
 
 /*
 Effectue une requête pour récupérer la liste des projets et les catégories depuis l'API.
@@ -185,11 +191,8 @@ const modalClose = document.getElementById('modal-close');
 modalClose.addEventListener('click', () => {
     const modalContainer = document.getElementById('modal-container');
     modalContainer.style.display = 'none';
+});  
 });
-
-    
-});
-
 
 
 // Vérifie si l'utilisateur est connecté en utilisant les informations de session.
