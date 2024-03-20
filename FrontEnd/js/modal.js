@@ -102,7 +102,7 @@ function returnToFirstModal() {
 
 
 
-let apiWorksModal = fetch('http://localhost:5678/api/works');
+const apiWorksModal = fetch('http://localhost:5678/api/works');
 const galleryModal = document.querySelector('.gallery-modal');
 
 // Fonction pour créer une figure pour chaque projet récupéré de l'API
@@ -179,7 +179,6 @@ fetch('http://localhost:5678/api/categories')
 // Sélection des éléments du formulaire
 const inputImage = document.getElementById('input-image');
 const photoContainer = document.getElementById('photo-container');
-const modalPhotoCategory = document.getElementById('modal-photo-category');
 
 // Fonction pour réinitialiser l'image sélectionnée
 function resetImage() {
@@ -206,264 +205,144 @@ inputImage.addEventListener('change', function () {
     }
 });
 
-// Récupérer les catégories depuis l'API et les ajouter au formulaire
-fetch('http://localhost:5678/api/categories')
-    .then((response) => response.json())
-    .then((categories) => {
-        // Parcourir les catégories et les ajouter au menu déroulant
-        categories.forEach((category) => {
-            const option = document.createElement('option');
-            option.value = category.id;
-            option.textContent = category.name;
-            modalPhotoCategory.appendChild(option);
+
+// Validation du formulaire
+const validateButton = document.getElementById('valide-photo'); // Sélection du bouton de validation
+const photoTitleInput = document.getElementById('modal-photo-title'); // Sélection de l'entrée de titre de photo
+const photoCategorySelect = document.getElementById('modal-photo-category'); // Sélection de la liste déroulante de catégories
+const form = document.getElementById('form-project'); // Sélection du formulaire
+
+function validateForm() {
+    // Vérification si les champs requis sont remplis
+    if (
+        photoTitleInput.value.trim() !== '' && // Vérification du titre de la photo
+        photoCategorySelect.value !== '' && // Vérification de la catégorie sélectionnée
+        inputImage.value !== '' // Vérification si une image est sélectionnée
+    ) {
+        validateButton.style.backgroundColor = '#1D6154'; // Changement de couleur du bouton de validation si le formulaire est valide
+    } else {
+        validateButton.style.backgroundColor = ''; // Réinitialisation de la couleur du bouton de validation si le formulaire est invalide
+    }
+}
+
+form.addEventListener('input', validateForm); // Écouteur d'événement pour vérifier le formulaire lors de la saisie
+
+// Ajout de projet côté serveur
+form.addEventListener('submit', (event) => {
+    event.preventDefault(); // Empêcher le comportement par défaut du formulaire
+
+    addProjectToBackend(event); // Appel de la fonction pour ajouter le projet côté serveur
+});
+
+async function addProjectToBackend(event) {
+    event.preventDefault(); // Empêcher le comportement par défaut du formulaire
+
+    const category = photoCategorySelect.value; // Récupération de la catégorie sélectionnée
+    const title = photoTitleInput.value; // Récupération du titre de la photo
+    const image = inputImage.files[0]; // Récupération du fichier d'image sélectionné
+    const token = sessionStorage.getItem('Token'); // Récupération du jeton d'authentification depuis la session
+
+    if (!title.trim() || !category || !image) {
+        // Vérification si tous les champs requis sont remplis
+        alert('Veuillez remplir tous les champs'); // Affichage d'une alerte si des champs sont manquants
+        return; // Arrêt de la fonction si des champs sont manquants
+    }
+
+    const formData = new FormData(); // Création d'un objet FormData pour envoyer les données
+
+    formData.append('title', title); // Ajout du titre au formulaire
+    formData.append('category', category); // Ajout de la catégorie au formulaire
+    formData.append('image', image); // Ajout de l'image au formulaire
+
+    try {
+        const response = await fetch('http://localhost:5678/api/works/', {
+            // Envoi des données au backend via une requête fetch
+            method: 'POST',
+            headers: {
+                Authorization: `Bearer ${token}`, // Ajout du jeton d'authentification dans les en-têtes de la requête
+            },
+            body: formData, // Utilisation de l'objet FormData comme corps de la requête
         });
-    })
-    .catch((error) => {
-        console.error('Une erreur s\'est produite lors de la récupération des catégories :', error);
-    });
+
+        if (response.ok) {
+            // Vérification si la réponse est OK
+            const responseData = await response.json(); // Conversion de la réponse en JSON
+
+            const figure = createFigureElement(responseData); // Création d'un élément figure pour afficher le projet ajouté
+            const gallery = document.querySelector('.gallery'); // Sélection de la galerie d'images
+            gallery.appendChild(figure); // Ajout de l'élément figure à la galerie d'images
+
+            const figureModal = createFigureModal(responseData); // Création d'un élément figure pour la modal
+            galleryModal.appendChild(figureModal); // Ajout de l'élément figure à la modal
+
+            const deleteIcon = figureModal.querySelector('.delete-icone'); // Sélection de l'icône de suppression
+            deleteIcon.addEventListener('click', () => {
+                // Ajout d'un écouteur d'événement pour la suppression du projet
+                deleteProjectConfirm(responseData.id); // Appel de la fonction pour confirmer la suppression du projet
+            });
+
+            modal.style.display = 'flex'; // Affichage de la modal
+            modalPhoto.style.display = 'none'; // Masquage de la modal d'ajout de photo
+
+            resetImage(); // Réinitialisation de l'image sélectionnée
+            photoTitleInput.value = ''; // Réinitialisation du titre de la photo
+            photoCategorySelect.value = ''; // Réinitialisation de la catégorie sélectionnée
+            validateButton.style.backgroundColor = ''; // Réinitialisation de la couleur du bouton de validation
+        }
+    } catch (error) {
+        console.error(error); // Affichage d'une erreur dans la console en cas de problème lors de l'ajout du projet
+    }
+}
 
 
 
+// // Sélection du formulaire
+// const form = document.getElementById('form-project');
 
-
-
-
-
-
-
-
-
-
-
-
-// // Sélection de l'élément bouton "Modifier"
-// const modifyButton = document.getElementById('modify');
-
-// // Fonction pour ouvrir la modal lorsque le bouton "Modifier" est cliqué
-// function openModal() {
-//     modalContainer.classList.add('active');
-//     // Afficher le contenu de la modal appropriée ici, par exemple : galleryModal.style.display = 'block';
-//     // Assurez-vous que le contenu de la modal appropriée est affiché lorsque la modal est ouverte
-// }
-
-// // Associer l'événement de clic à la fonction pour ouvrir la modal
-// modifyButton.addEventListener('click', openModal);
-
-// // Sélection des éléments HTML pertinents
-// const modalContainer = document.getElementById('modal-container');
-// const overlay = document.querySelector('.overlay');
-// const galleryModal = document.querySelector('.gallery-modal');
-// const addPhotoButton = document.getElementById('add-photo');
-// const modalCloseButton = document.getElementById('modal-close');
-// const modalPhoto = document.getElementById('modal-photo');
-// const modalPhotoCloseButton = document.getElementById('modal-photo-close');
-// const modalReturnButton = document.getElementById('modal-return');
-
-// // Fonction pour ouvrir la galerie photo
-// function openGalleryModal() {
-//     modalContainer.classList.add('active');
-//     galleryModal.style.display = 'block';
-// }
-
-// // Fonction pour fermer la galerie photo
-// function closeGalleryModal() {
-//     modalContainer.classList.remove('active');
-//     galleryModal.style.display = 'none';
-// }
-
-// // Fonction pour ouvrir la modale d'ajout de photo
-// function openAddPhotoModal() {
-//     galleryModal.style.display = 'none';
-//     modalPhoto.style.display = 'block';
-// }
-
-// // Fonction pour fermer la modale d'ajout de photo
-// function closeAddPhotoModal() {
-//     modalPhoto.style.display = 'none';
-//     galleryModal.style.display = 'block';
-// }
-
-// // Événement pour ouvrir la galerie photo lors du clic sur le bouton "Ajouter une photo"
-// addPhotoButton.addEventListener('click', openGalleryModal);
-
-// // Événement pour fermer la galerie photo lors du clic sur le bouton de fermeture de la modale
-// modalCloseButton.addEventListener('click', closeGalleryModal);
-
-// // Événement pour ouvrir la modale d'ajout de photo lors du clic sur le bouton "Ajouter une photo"
-// addPhotoButton.addEventListener('click', openAddPhotoModal);
-
-// // Événement pour fermer la modale d'ajout de photo lors du clic sur le bouton de fermeture de la modale
-// modalPhotoCloseButton.addEventListener('click', closeAddPhotoModal);
-
-// // Événement pour retourner à la galerie depuis la modale d'ajout de photo
-// modalReturnButton.addEventListener('click', () => {
-//     closeAddPhotoModal();
-//     openGalleryModal();
-// });
-
-// // Événement pour fermer la modale en cliquant sur l'overlay
-// overlay.addEventListener('click', () => {
-//     closeGalleryModal();
-//     closeAddPhotoModal();
-// });
-
-
-// // Insérer la balise <aside> directement après le body
-// document.body.insertAdjacentHTML('afterbegin', modalContainerHTML);
-
-
-
-
-
-// // GESTION D'AFFICHAGE DES MODALES
-
-// const modalContainer = document.getElementById('modal-container');
-// const buttonModify = document.getElementById('modify');
-// const modalPhoto = document.getElementById('modal-photo');
-
-
-// buttonModify.addEventListener('click', () => {
-//     modalContainer.style.display = 'block';
-//     modalPhoto.style.display = 'none';
-//     modal.style.display = 'flex';
-// });
-
-// // FERMETURE ET OUVERTURE MODALES
-
-// const closeModal = document.getElementById('modal-close');
-// const overlay = document.querySelector('.overlay');
-// const addPhoto = document.getElementById('add-photo');
-// const modal = document.getElementById('modal');
-// const closeModalPhoto = document.getElementById('modal-photo-close');
-// const modalReturn = document.getElementById('modal-return');
-
-
-// closeModal.addEventListener('click', () => {
-//     modalContainer.style.display = 'none';
-// });
-
-
-// overlay.addEventListener('click', () => {
-//     modalContainer.style.display = 'none';
-//     resetImage();
-//     title.value = '';
-//     category.value = '';
-// });
-
-
-// addPhoto.addEventListener('click', () => {
-//     modal.style.display = 'none';
-//     modalPhoto.style.display = 'flex';
-// });
-
-
-// closeModalPhoto.addEventListener('click', () => {
-//     modalContainer.style.display = 'none';
-//     resetImage();
-//     title.value = '';
-//     category.value = '';
-// });
-
-
-// modalReturn.addEventListener('click', () => {
-//     modalPhoto.style.display = 'none';
-//     modal.style.display = 'flex';
-//     resetImage();
-//     title.value = '';
-//     category.value = '';
-// });
-
-
-
-// // VALIDATION FORMULAIRE
-
-// const buttonValidePhoto = document.getElementById('valide-photo');
-// const modalPhotoTitle = document.getElementById('modal-photo-title');
-// const modalPhotoCategory = document.getElementById('modal-photo-category');
-// const formulaire = document.getElementById('form-project');
-
-
-// function formValide() {
-//     if (
-//         modalPhotoTitle.value.trim() !== '' &&
-//         modalPhotoCategory.value !== '' &&
-//         inputImage.value !== ''
-//     ) {
-//         buttonValidePhoto.style.backgroundColor = '#1D6154';
-//     } else {
-//         buttonValidePhoto.style.backgroundColor = '';
-//     }
-// }
-
-
-// formulaire.addEventListener('input', formValide);
-
-// // AJOUT DE PROJET AU BACKEND
-
-// const category = document.getElementById('modal-photo-category');
-// const title = document.getElementById('modal-photo-title');
-// const image = document.querySelector('input[type=file]');
-// const token = sessionStorage.getItem('Token');
-
-
-// formulaire.addEventListener('submit', (event) => {
+// // Écouter l'événement de soumission du formulaire
+// form.addEventListener('submit', function(event) {
+//     // Empêcher le comportement par défaut du formulaire
 //     event.preventDefault();
 
-//     addproject(event, token);
-// });
+//     // Récupérer les données du formulaire
+//     const title = document.getElementById('modal-photo-title').value;
+//     const category = document.getElementById('modal-photo-category').value;
+//     const image = inputImage.files[0]; // Récupérer l'image sélectionnée
 
-
-// async function addproject(event, token) {
-//     event.preventDefault();
-
-//     if (!title.value.trim() || !category.value || !image.files[0]) {
-//         alert('Veuillez remplir tous les champs');
-//         return;
-//     }
-
+//     // Créer un objet FormData pour envoyer les données
 //     const formData = new FormData();
-//     formData.append('title', title.value);
-//     formData.append('category', category.value);
-//     formData.append('image', image.files[0]);
+//     formData.append('title', title);
+//     formData.append('category', category);
+//     formData.append('image', image);
 
-//     try {
-//         const response = await fetch('http://localhost:5678/api/works/', {
-//             method: 'POST',
-//             headers: {
-//                 Authorization: `Bearer ${token}`,
-//             },
-//             body: formData,
-//         });
-
-//         if (response.ok) {
-//             const responseData = await response.json();
-
-//             const figure = createFigureElement(responseData);
-//             const gallery = document.querySelector('.gallery');
-//             gallery.appendChild(figure);
-
-//             const figureModal = createFigureModal(responseData);
-//             galleryModal.appendChild(figureModal);
-
-//             const deleteIcon = figureModal.querySelector('.delete-icone');
-//             deleteIcon.addEventListener('click', () => {
-//                 deleteProjectConfirm(responseData.id);
-//             });
-
-//             modal.style.display = 'flex';
-//             modalPhoto.style.display = 'none';
-
-//             resetImage();
-//             title.value = '';
-//             category.value = '';
-//             buttonValidePhoto.style.backgroundColor = '';
-
-//             window.alert('Projet ajouté avec succès');
+//     // Envoyer les données au backend
+//     fetch('http://localhost:5678/api/works', {
+//         method: 'POST',
+//         body: formData
+//     })
+//     .then(response => {
+//         if (!response.ok) {
+//             throw new Error('Erreur lors de l\'ajout de la photo');
 //         }
-//     } catch (error) {
-//         console.error(error);
-//     }
-// }
+//         // Recharger la liste des projets si l'ajout est réussi
+//         return response.json();
+//     })
+//     .then(data => {
+//         // Réussite : recharger la liste des projets pour inclure le nouveau projet ajouté
+//         // Vous pouvez implémenter cette fonctionnalité ici
+//         console.log('Ajout réussi:', data);
+//         // Optionnel : afficher un message de succès à l'utilisateur
+//     })
+//     .catch(error => {
+//         // Erreur : afficher un message d'erreur à l'utilisateur
+//         console.error('Erreur lors de l\'ajout de la photo:', error.message);
+//         // Optionnel : afficher un message d'erreur à l'utilisateur
+//     });
+// });
+
+
+
+
 
 // // SUPPRESSION DE PROJET
 
