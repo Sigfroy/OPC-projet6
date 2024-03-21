@@ -1,27 +1,3 @@
-    // // Gestionnaire d'événements pour le bouton "Ajouter une photo" dans la modale existante
-    // document.getElementById('add-photo').addEventListener('click', function () {
-    //     console.log("clique ajout photo")
-    //     // Cache la modale existante
-    //     document.getElementById('modal-photo').style.display = 'block';
-    //     // Crée un nouvel élément div pour la nouvelle modale
-    //     const modalAddPhoto = document.createElement('div');
-    //     modalAddPhoto.id = 'modal-add-photo';
-    //     modalAddPhoto.style.display = 'block';
-
-    // //     // Ajoute la nouvelle modale au body
-    //     document.body.appendChild(modalAddPhoto);
-
-    //     // Ajoute un gestionnaire d'événements pour le bouton de fermeture de la nouvelle modale
-    //     document.getElementById('modal-photo-close-add').addEventListener('click', function () {
-    //         // Supprime la nouvelle modale du DOM
-    //         document.body.removeChild(modalAddPhoto);
-
-    //         // Affiche la modale existante
-    //         document.getElementById('modal-photo').style.display = 'block';
-    //     });
-    // }); 
-
-
 const adminSectionHTML = `
     <section id="admin">
         <button id="edition"><i class="fa-regular fa-pen-to-square"></i>Modifier</button>

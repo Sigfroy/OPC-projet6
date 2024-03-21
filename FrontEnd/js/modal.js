@@ -51,7 +51,7 @@ function openModal() {
     modal.style.display = 'block';
 }
 
-// Attendre que le contenu de la modal soit inséré dans le document
+/// Attendre que le contenu de la modal soit inséré dans le document
 document.addEventListener('DOMContentLoaded', function() {
     // Sélection de l'élément bouton "Ajouter une photo"
     const addPhotoButton = document.getElementById('add-photo');
@@ -77,19 +77,38 @@ document.addEventListener('DOMContentLoaded', function() {
     const modalReturnButton = document.getElementById('modal-return');
     // Associer un événement de clic au bouton pour retourner à la première modale
     modalReturnButton.addEventListener('click', returnToFirstModal);
+
+    // Attendre que les éléments soient prêts avant d'ouvrir la modal
+    openModal();
 });
 
+// Fonction pour ouvrir la première modal
+function openModal() {
+    const modal = document.getElementById('modal');
+    modal.style.display = 'block';
+}
 
 /// Fonction pour fermer toutes les modales
 function closeAllModals() {
     const modalContainer = document.getElementById('modal-container');
     modalContainer.style.display = 'none'; // Masquer le conteneur de la modal
+
+    const modal = document.getElementById('modal');
+    const modalPhoto = document.getElementById('modal-photo');
+    modal.style.display = 'block'; // Afficher la première modal
+    modalPhoto.style.display = 'none'; // Masquer la deuxième modal
 }
 
-// Sélection de l'élément bouton pour retourner à la première modale
-const modalReturnButton = document.getElementById('modal-return');
-// Associer un événement de clic au bouton pour retourner à la première modale
-modalReturnButton.addEventListener('click', returnToFirstModal);
+// Sélection de l'élément bouton pour fermer toutes les modales
+const modalPhotoCloseButton = document.getElementById('modal-photo-close');
+// Associer un événement de clic au bouton pour fermer toutes les modales
+modalPhotoCloseButton.addEventListener('click', () => {
+    // Masquer la modal secondaire
+    modalPhoto.style.display = 'none';
+        // Appeler la fonction pour retourner à la première modal
+        returnToFirstModal();
+});
+
 
 /// Fonction pour retourner à la première modale
 function returnToFirstModal() {
@@ -99,7 +118,10 @@ function returnToFirstModal() {
     modalContainer.style.display = 'block'; // Afficher le conteneur de la modal
     modal.style.display = 'block'; // Afficher la première modal
     modalPhoto.style.display = 'none'; // Masquer la deuxième modal
+
+    console.log("Returning to first modal");
 }
+
 
 
 
@@ -117,8 +139,9 @@ function createFigureModal(work) {
     const iDelete = document.createElement('i');
     iDelete.className = 'fa-solid fa-trash-can delete-icone';
 
-     // Ajout d'un écouteur d'événement pour la suppression du projet
+    // Ajout d'un écouteur d'événement pour la suppression du projet
     iDelete.addEventListener('click', () => {
+        console.log("Suppression du projet confirmée");
         deleteProjectConfirm(work.id);
     });
 
@@ -128,12 +151,14 @@ function createFigureModal(work) {
     return figureModal;
 }
 
-// Fonction pour confirmer la suppression du projet (sans afficher la boîte de dialogue)
-function deleteProjectConfirm(projectId) {
-    // Supprimer le projet directement sans afficher de boîte de dialogue de confirmation
-    deleteProject(projectId);
-}
 
+// Fonction pour confirmer la suppression du projet sans fermer la modale
+function deleteProjectConfirm(projectId) {
+    // Supprimer le projet directement sans fermer la modale
+    console.log("Confirmation de suppression du projet avec l'ID : ", projectId);
+    deleteProject(projectId);
+    closeAllModals();
+}
 
 // Fonction pour supprimer le projet côté serveur
 async function deleteProject(projectId) {
@@ -157,11 +182,13 @@ async function deleteProject(projectId) {
         } else {
             console.error('La suppression du projet a échoué.');
         }
+
+         // Appeler la fonction pour revenir à la première modal après la suppression du projet
+        returnToFirstModal();
     } catch (error) {
         console.error('Une erreur s\'est produite lors de la suppression du projet :', error);
     }
 }
-
 
 
 // Attendre que la requête pour les projets soit résolue
@@ -306,138 +333,27 @@ async function addProjectToBackend(event) {
             },
             body: formData, // Utilisation de l'objet FormData comme corps de la requête
         });
-
+    
         if (response.ok) {
             // Vérification si la réponse est OK
             const responseData = await response.json(); // Conversion de la réponse en JSON
-
+    
             const figure = createFigureElement(responseData); // Création d'un élément figure pour afficher le projet ajouté
             const gallery = document.querySelector('.gallery'); // Sélection de la galerie d'images
             gallery.appendChild(figure); // Ajout de l'élément figure à la galerie d'images
-
+    
             const figureModal = createFigureModal(responseData); // Création d'un élément figure pour la modal
             galleryModal.appendChild(figureModal); // Ajout de l'élément figure à la modal
-
+    
             const deleteIcon = figureModal.querySelector('.delete-icone'); // Sélection de l'icône de suppression
             deleteIcon.addEventListener('click', () => {
                 // Ajout d'un écouteur d'événement pour la suppression du projet
                 deleteProjectConfirm(responseData.id); // Appel de la fonction pour confirmer la suppression du projet
             });
-
-            modal.style.display = 'block'; // Affichage de la modal
-            modalPhoto.style.display = 'none'; // Masquage de la modal d'ajout de photo
-
+    
             returnToFirstModal(); // Afficher la première modal après avoir ajouté le projet
         }
     } catch (error) {
         console.error(error); // Affichage d'une erreur dans la console en cas de problème lors de l'ajout du projet
-    }
+    }    
 }
-
-// Fonction pour fermer toutes les modales
-function closeModal() {
-    const modalContainer = document.getElementById('modal-container');
-    modalContainer.style.display = 'none'; // Masquer le conteneur de la modal
-}
-
-// Fonction pour ouvrir la première modal
-function openFirstModal() {
-    const modal = document.getElementById('modal');
-    modal.style.display = 'block';
-}
-
-
-
-
-
-
-
-// // Sélection du formulaire
-// const form = document.getElementById('form-project');
-
-// // Écouter l'événement de soumission du formulaire
-// form.addEventListener('submit', function(event) {
-//     // Empêcher le comportement par défaut du formulaire
-//     event.preventDefault();
-
-//     // Récupérer les données du formulaire
-//     const title = document.getElementById('modal-photo-title').value;
-//     const category = document.getElementById('modal-photo-category').value;
-//     const image = inputImage.files[0]; // Récupérer l'image sélectionnée
-
-//     // Créer un objet FormData pour envoyer les données
-//     const formData = new FormData();
-//     formData.append('title', title);
-//     formData.append('category', category);
-//     formData.append('image', image);
-
-//     // Envoyer les données au backend
-//     fetch('http://localhost:5678/api/works', {
-//         method: 'POST',
-//         body: formData
-//     })
-//     .then(response => {
-//         if (!response.ok) {
-//             throw new Error('Erreur lors de l\'ajout de la photo');
-//         }
-//         // Recharger la liste des projets si l'ajout est réussi
-//         return response.json();
-//     })
-//     .then(data => {
-//         // Réussite : recharger la liste des projets pour inclure le nouveau projet ajouté
-//         // Vous pouvez implémenter cette fonctionnalité ici
-//         console.log('Ajout réussi:', data);
-//         // Optionnel : afficher un message de succès à l'utilisateur
-//     })
-//     .catch(error => {
-//         // Erreur : afficher un message d'erreur à l'utilisateur
-//         console.error('Erreur lors de l\'ajout de la photo:', error.message);
-//         // Optionnel : afficher un message d'erreur à l'utilisateur
-//     });
-// });
-
-
-
-
-
-// // SUPPRESSION DE PROJET
-
-// async function deleteProject(id, token) {
-//     try {
-//         const response = await fetch(`http://localhost:5678/api/works/${id}`, {
-//             method: 'DELETE',
-//             headers: {
-//                 accept: '*/*',
-//                 Authorization: `Bearer ${token}`,
-//             },
-//         });
-
-//         if (response.ok) {
-//             window.alert('Projet supprimé avec succès');
-//         }
-//     } catch (error) {
-//         console.error('Erreur lors de la suppression du projet :', error);
-//     }
-// }
-
-
-// async function deleteProjectConfirm(id) {
-//     const confirmation = confirm(
-//         'Êtes-vous sûr de vouloir supprimer ce projet ?'
-//     );
-//     if (confirmation) {
-//         await deleteProject(id, token);
-
-//         const figureToDelete = document.querySelector(`[data-id="${id}"]`);
-//         if (figureToDelete) {
-//             figureToDelete.remove();
-//         }
-
-//         const figureModalToDelete = document.querySelector(
-//             `.gallery-modal [data-id="${id}"]`
-//         );
-//         if (figureModalToDelete) {
-//             figureModalToDelete.remove();
-//         }
-//     }
-// }
