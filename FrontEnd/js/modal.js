@@ -8,7 +8,7 @@ const modalContainerHTML = `
         <button id="modal-close"><i class="fa-solid fa-xmark"></i></button>
         <button type="button" id="add-photo">Ajouter une photo</button>
     </div>
-    <div id="modal-photo">
+    <div id="modal-photo" style="display:none;">
         <h2>Ajout photo</h2> 
         <form enctype="multipart/form-data" method="POST" id="form-project">
             <div id="photo-container">
@@ -79,6 +79,7 @@ document.addEventListener('DOMContentLoaded', function() {
     modalReturnButton.addEventListener('click', returnToFirstModal);
 });
 
+
 /// Fonction pour fermer toutes les modales
 function closeAllModals() {
     const modalContainer = document.getElementById('modal-container');
@@ -116,11 +117,52 @@ function createFigureModal(work) {
     const iDelete = document.createElement('i');
     iDelete.className = 'fa-solid fa-trash-can delete-icone';
 
+     // Ajout d'un écouteur d'événement pour la suppression du projet
+    iDelete.addEventListener('click', () => {
+        deleteProjectConfirm(work.id);
+    });
+
     figureModal.appendChild(imageModal);
     figureModal.appendChild(iDelete);
 
     return figureModal;
 }
+
+// Fonction pour confirmer la suppression du projet (sans afficher la boîte de dialogue)
+function deleteProjectConfirm(projectId) {
+    // Supprimer le projet directement sans afficher de boîte de dialogue de confirmation
+    deleteProject(projectId);
+}
+
+
+// Fonction pour supprimer le projet côté serveur
+async function deleteProject(projectId) {
+    const token = sessionStorage.getItem('Token'); // Récupération du jeton d'authentification depuis la session
+
+    try {
+        const response = await fetch(`http://localhost:5678/api/works/${projectId}`, {
+            // Envoi de la demande de suppression au backend via une requête fetch
+            method: 'DELETE',
+            headers: {
+                Authorization: `Bearer ${token}`, // Ajout du jeton d'authentification dans les en-têtes de la requête
+            },
+        });
+
+        if (response.ok) {
+            // Si la suppression est réussie, supprimer l'élément correspondant de la galerie modal
+            const figureModalToDelete = document.querySelector(`.gallery-modal figure[data-id="${projectId}"]`);
+            if (figureModalToDelete) {
+                figureModalToDelete.remove();
+            }
+        } else {
+            console.error('La suppression du projet a échoué.');
+        }
+    } catch (error) {
+        console.error('Une erreur s\'est produite lors de la suppression du projet :', error);
+    }
+}
+
+
 
 // Attendre que la requête pour les projets soit résolue
 apiWorksModal.then(response => response.json())
@@ -158,6 +200,7 @@ function updateCategories(categories) {
     // Ajouter les options des catégories
     categories.forEach(category => {
         const option = document.createElement('option');
+        option.value = category
         option.value = category.id;
         option.textContent = category.name;
         categorySelect.appendChild(option);
@@ -227,7 +270,7 @@ function validateForm() {
 
 form.addEventListener('input', validateForm); // Écouteur d'événement pour vérifier le formulaire lors de la saisie
 
-// Ajout de projet côté serveur
+/// Ajout de projet côté serveur
 form.addEventListener('submit', (event) => {
     event.preventDefault(); // Empêcher le comportement par défaut du formulaire
 
@@ -281,18 +324,31 @@ async function addProjectToBackend(event) {
                 deleteProjectConfirm(responseData.id); // Appel de la fonction pour confirmer la suppression du projet
             });
 
-            modal.style.display = 'flex'; // Affichage de la modal
+            modal.style.display = 'block'; // Affichage de la modal
             modalPhoto.style.display = 'none'; // Masquage de la modal d'ajout de photo
 
-            resetImage(); // Réinitialisation de l'image sélectionnée
-            photoTitleInput.value = ''; // Réinitialisation du titre de la photo
-            photoCategorySelect.value = ''; // Réinitialisation de la catégorie sélectionnée
-            validateButton.style.backgroundColor = ''; // Réinitialisation de la couleur du bouton de validation
+            returnToFirstModal(); // Afficher la première modal après avoir ajouté le projet
         }
     } catch (error) {
         console.error(error); // Affichage d'une erreur dans la console en cas de problème lors de l'ajout du projet
     }
 }
+
+// Fonction pour fermer toutes les modales
+function closeModal() {
+    const modalContainer = document.getElementById('modal-container');
+    modalContainer.style.display = 'none'; // Masquer le conteneur de la modal
+}
+
+// Fonction pour ouvrir la première modal
+function openFirstModal() {
+    const modal = document.getElementById('modal');
+    modal.style.display = 'block';
+}
+
+
+
+
 
 
 
