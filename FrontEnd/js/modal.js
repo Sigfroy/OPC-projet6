@@ -51,80 +51,31 @@ function openModal() {
     modal.style.display = 'block';
 }
 
-/// Attendre que le contenu de la modal soit inséré dans le document
-document.addEventListener('DOMContentLoaded', function () {
-    // Sélection de l'élément bouton "Ajouter une photo"
-    const addPhotoButton = document.getElementById('add-photo');
+// Sélection des éléments nécessaires
+const modal = document.getElementById('modal');
+const modalPhoto = document.getElementById('modal-photo');
+const addPhotoButton = document.getElementById('add-photo');
+const modalReturnButton = document.getElementById('modal-return');
 
-    // Sélection de la première modale et de la deuxième modale
-    const modal = document.getElementById('modal');
-    const modalPhoto = document.getElementById('modal-photo');
-
-    // Associer un événement de clic au bouton "Ajouter une photo"
-    addPhotoButton.addEventListener('click', () => {
-        // Masquer la première modale
-        modal.style.display = 'none';
-        // Afficher la deuxième modale
-        modalPhoto.style.display = 'block';
-    });
-
-    // Sélection de l'élément bouton pour fermer toutes les modales
-    const modalPhotoCloseButton = document.getElementById('modal-photo-close');
-    // Associer un événement de clic au bouton pour fermer toutes les modales
-    modalPhotoCloseButton.addEventListener('click', closeAllModals);
-
-    // Sélection de l'élément bouton pour retourner à la première modale
-    const modalReturnButton = document.getElementById('modal-return');
-    // Associer un événement de clic au bouton pour retourner à la première modale
-    modalReturnButton.addEventListener('click', returnToFirstModal);
-
-    // Attendre que les éléments soient prêts avant d'ouvrir la modal
-    openModal();
+// Associer l'événement de clic au bouton "Ajouter une photo"
+addPhotoButton.addEventListener('click', () => {
+    // Masquer la première modale
+    modal.style.display = 'none';
+    // Afficher la deuxième modale
+    modalPhoto.style.display = 'block';
 });
 
-// Fonction pour ouvrir la première modal
-function openModal() {
-    const modal = document.getElementById('modal');
+// Associer un événement de clic au bouton pour retourner à la première modale
+modalReturnButton.addEventListener('click', () => {
+    // Afficher la première modale
     modal.style.display = 'block';
-}
-
-/// Fonction pour fermer toutes les modales
-function closeAllModals() {
-    const modalContainer = document.getElementById('modal-container');
-    modalContainer.style.display = 'none'; // Masquer le conteneur de la modal
-
-    const modal = document.getElementById('modal');
-    const modalPhoto = document.getElementById('modal-photo');
-    modal.style.display = 'block'; // Afficher la première modal
-    modalPhoto.style.display = 'none'; // Masquer la deuxième modal
-}
-
-// Sélection de l'élément bouton pour fermer toutes les modales
-const modalPhotoCloseButton = document.getElementById('modal-photo-close');
-// Associer un événement de clic au bouton pour fermer toutes les modales
-modalPhotoCloseButton.addEventListener('click', () => {
-    // Masquer la modal secondaire
+    // Masquer la deuxième modale
     modalPhoto.style.display = 'none';
-    // Appeler la fonction pour retourner à la première modal
-    returnToFirstModal();
 });
 
 
-/// Fonction pour retourner à la première modale
-function returnToFirstModal() {
-    const modalContainer = document.getElementById('modal-container');
-    const modal = document.getElementById('modal');
-    const modalPhoto = document.getElementById('modal-photo');
-    modalContainer.style.display = 'block'; // Afficher le conteneur de la modal
-    modal.style.display = 'block'; // Afficher la première modal
-    modalPhoto.style.display = 'none'; // Masquer la deuxième modal
-
-}
 
 
-
-
-const apiWorksModal = fetch('http://localhost:5678/api/works');
 const galleryModal = document.querySelector('.gallery-modal');
 
 // Fonction pour créer une figure pour chaque projet récupéré de l'API
@@ -190,7 +141,8 @@ async function deleteProject(projectId) {
 
 
 // Attendre que la requête pour les projets soit résolue
-apiWorksModal.then(response => response.json())
+fetch('http://localhost:5678/api/works')
+    .then(response => response.json())
     .then(data => {
         // Boucler à travers chaque projet et créer une figure pour l'ajouter à la galerie modal
         data.forEach(work => {
@@ -200,12 +152,8 @@ apiWorksModal.then(response => response.json())
     })
     .catch(error => console.error('Une erreur s\'est produite lors de la récupération des projets :', error));
 
-// Sélection de l'élément bouton "Ajouter une photo"
-const addPhotoButton = document.getElementById('add-photo');
 
 // Sélection de la première modale et de la deuxième modale
-const modal = document.getElementById('modal');
-const modalPhoto = document.getElementById('modal-photo');
 
 // Sélection de l'élément de la liste déroulante des catégories
 const categorySelect = document.getElementById('modal-photo-category');
