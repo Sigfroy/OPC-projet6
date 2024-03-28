@@ -7,11 +7,8 @@ const adminSectionHTML = `
 // Insérez la section admin directement après le body
 document.body.insertAdjacentHTML('afterbegin', adminSectionHTML);
 
-/*
-Effectue une requête pour récupérer la liste des projets et les catégories depuis l'API.
- */
-const apiWorks = fetch('http://localhost:5678/api/works');
-const categories = fetch('http://localhost:5678/api/categories');
+// Effectue une requête pour récupérer la liste des projets et les catégories depuis l'API.
+
 const gallery = document.querySelector('.gallery');
 const portfolio = document.getElementById('portfolio');
 const buttonFiltre = document.querySelector('.button');
@@ -19,9 +16,8 @@ const buttonFiltre = document.querySelector('.button');
 let allWorks = []; // Stocke la liste complète des projets récupérée depuis l'API.
 
 
-/*
-Crée un élément figure HTML (figure, img et figcaption) pour un projet donné.
- */
+// Crée un élément figure HTML (figure, img et figcaption) pour un projet donné.
+
 function createFigureElement(work) {
     const figureElement = document.createElement('figure');
     figureElement.setAttribute('data-id', work.id);
@@ -38,81 +34,81 @@ function createFigureElement(work) {
     return figureElement;
 }
 
-/*
-Traite la réponse de la requête vers l'API des projets.
- */
-apiWorks.then(async (responseApiWorks) => {
-    if (!responseApiWorks.ok) {
-        throw new Error('Erreur lors de la récupération des projets');
-    }
+// Traite la réponse de la requête vers l'API des projets.
 
-    const data = await responseApiWorks.json();
+fetch('http://localhost:5678/api/works')
+    .then(async (responseApiWorks) => {
+        if (!responseApiWorks.ok) {
+            throw new Error('Erreur lors de la récupération des projets');
+        }
 
-    if (gallery) {
-        allWorks = data;
-        displayWorks(allWorks);
-    } else {
-        console.error("La galerie n'a pas été trouvée.");
-    }
-});
+        const data = await responseApiWorks.json();
 
-/*
-Traite la réponse de la requête vers l'API des catégories.
-Crée les boutons de filtres et la classe active.
- */
-categories.then(async (responseCategories) => {
-    if (!responseCategories.ok) {
-        throw new Error('Erreur lors de la récupération des catégories');
-    }
-
-    const dataCategories = await responseCategories.json();
-
-    if (portfolio) {
-        const filtres = document.createElement('div');
-        filtres.classList.add('filtres');
-
-        const tousButton = document.createElement('button');
-        tousButton.textContent = 'Tous';
-        tousButton.classList.add('button', 'active');
-        tousButton.addEventListener('click', () => {
-            document
-                .querySelectorAll('.button')
-                .forEach((btn) => btn.classList.remove('active'));
-
-            tousButton.classList.add('active');
+        if (gallery) {
+            allWorks = data;
             displayWorks(allWorks);
-        });
+        } else {
+            console.error("La galerie n'a pas été trouvée.");
+        }
+    });
 
-        filtres.appendChild(tousButton);
+// Traite la réponse de la requête vers l'API des catégories.
+// Crée les boutons de filtres et la classe active.
 
-        dataCategories.forEach((category) => {
-            const buttonElement = document.createElement('button');
-            buttonElement.classList.add('button');
-            buttonElement.textContent = category.name;
+fetch('http://localhost:5678/api/categories')
+    .then(async (responseCategories) => {
+        if (!responseCategories.ok) {
+            throw new Error('Erreur lors de la récupération des catégories');
+        }
 
-            buttonElement.addEventListener('click', () => {
+        const dataCategories = await responseCategories.json();
+
+        if (portfolio) {
+            const filtres = document.createElement('div');
+            filtres.classList.add('filtres');
+
+            const tousButton = document.createElement('button');
+            tousButton.textContent = 'Tous';
+            tousButton.classList.add('button', 'active');
+            tousButton.addEventListener('click', () => {
                 document
                     .querySelectorAll('.button')
                     .forEach((btn) => btn.classList.remove('active'));
 
-                buttonElement.classList.add('active');
-                const filteredWorks = filterWorksByCategory(category);
-                displayWorks(filteredWorks);
+                tousButton.classList.add('active');
+                displayWorks(allWorks);
             });
 
-            filtres.appendChild(buttonElement);
-        });
+            filtres.appendChild(tousButton);
 
-        portfolio.appendChild(filtres);
-        portfolio.insertBefore(filtres, gallery);
+            dataCategories.forEach((category) => {
+                const buttonElement = document.createElement('button');
+                buttonElement.classList.add('button');
+                buttonElement.textContent = category.name;
 
-        if (JSON.parse(sessionStorage.getItem('connected'))) {
-            filtres.style.display = 'none';
+                buttonElement.addEventListener('click', () => {
+                    document
+                        .querySelectorAll('.button')
+                        .forEach((btn) => btn.classList.remove('active'));
+
+                    buttonElement.classList.add('active');
+                    const filteredWorks = filterWorksByCategory(category);
+                    displayWorks(filteredWorks);
+                });
+
+                filtres.appendChild(buttonElement);
+            });
+
+            portfolio.appendChild(filtres);
+            portfolio.insertBefore(filtres, gallery);
+
+            if (JSON.parse(sessionStorage.getItem('connected'))) {
+                filtres.style.display = 'none';
+            }
+        } else {
+            console.error("Les catégories n'ont pas été trouvées.");
         }
-    } else {
-        console.error("Les catégories n'ont pas été trouvées.");
-    }
-});
+    });
 
 /*
 Affiche les projets dans la galerie.
@@ -162,12 +158,12 @@ modify.addEventListener('click', () => {
         galleryModal.appendChild(figureModal);
     });
 
-// Ajoutez un écouteur au bouton de fermeture de la modale principale
-const modalClose = document.getElementById('modal-close');
-modalClose.addEventListener('click', () => {
-    const modalContainer = document.getElementById('modal-container');
-    modalContainer.style.display = 'none';
-});  
+    // Ajoutez un écouteur au bouton de fermeture de la modale principale
+    const modalClose = document.getElementById('modal-close');
+    modalClose.addEventListener('click', () => {
+        const modalContainer = document.getElementById('modal-container');
+        modalContainer.style.display = 'none';
+    });
 });
 
 
@@ -185,15 +181,16 @@ if (JSON.parse(sessionStorage.getItem('connected'))) {
     logout.style.display = 'none';
     admin.style.display = 'none';
     modify.style.display = 'none';
-}
-
-// Ajoute un écouteur d'événement au bouton de déconnexion.
-logout.addEventListener('click', (event) => {
+    header.style.marginTop = '0'; // Réinitialiser la marge supérieure si l'utilisateur n'est pas connecté
+    }
+    
+    // Ajoute un écouteur d'événement au bouton de déconnexion.
+    logout.addEventListener('click', (event) => {
     // Empêche le comportement par défaut du bouton de déconnexion.
     event.preventDefault();
 
     // Supprime les informations de session et redirige vers la page d'accueil.
-    sessionStorage.removeItem('Token');
-    sessionStorage.removeItem('connected');
-    window.location.replace('index.html');
+sessionStorage.removeItem('Token');
+sessionStorage.removeItem('connected');
+window.location.replace('index.html');
 });

@@ -52,7 +52,7 @@ function openModal() {
 }
 
 /// Attendre que le contenu de la modal soit inséré dans le document
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     // Sélection de l'élément bouton "Ajouter une photo"
     const addPhotoButton = document.getElementById('add-photo');
 
@@ -105,8 +105,8 @@ const modalPhotoCloseButton = document.getElementById('modal-photo-close');
 modalPhotoCloseButton.addEventListener('click', () => {
     // Masquer la modal secondaire
     modalPhoto.style.display = 'none';
-        // Appeler la fonction pour retourner à la première modal
-        returnToFirstModal();
+    // Appeler la fonction pour retourner à la première modal
+    returnToFirstModal();
 });
 
 
@@ -119,7 +119,6 @@ function returnToFirstModal() {
     modal.style.display = 'block'; // Afficher la première modal
     modalPhoto.style.display = 'none'; // Masquer la deuxième modal
 
-    console.log("Returning to first modal");
 }
 
 
@@ -157,7 +156,6 @@ function deleteProjectConfirm(projectId) {
     // Supprimer le projet directement sans fermer la modale
     console.log("Confirmation de suppression du projet avec l'ID : ", projectId);
     deleteProject(projectId);
-    closeAllModals();
 }
 
 // Fonction pour supprimer le projet côté serveur
@@ -183,7 +181,7 @@ async function deleteProject(projectId) {
             console.error('La suppression du projet a échoué.');
         }
 
-         // Appeler la fonction pour revenir à la première modal après la suppression du projet
+        // Appeler la fonction pour revenir à la première modal après la suppression du projet
         returnToFirstModal();
     } catch (error) {
         console.error('Une erreur s\'est produite lors de la suppression du projet :', error);
@@ -269,7 +267,7 @@ inputImage.addEventListener('change', function () {
         imgPreview.src = URL.createObjectURL(selectedImage);
         imgPreview.style.maxHeight = '100%';
         imgPreview.style.width = 'auto';
-        
+
         // Ajouter l'image prévisualisée au conteneur de l'image
         photoContainer.appendChild(imgPreview);
     }
@@ -333,27 +331,27 @@ async function addProjectToBackend(event) {
             },
             body: formData, // Utilisation de l'objet FormData comme corps de la requête
         });
-    
+
         if (response.ok) {
             // Vérification si la réponse est OK
             const responseData = await response.json(); // Conversion de la réponse en JSON
-    
+
             const figure = createFigureElement(responseData); // Création d'un élément figure pour afficher le projet ajouté
             const gallery = document.querySelector('.gallery'); // Sélection de la galerie d'images
             gallery.appendChild(figure); // Ajout de l'élément figure à la galerie d'images
-    
+
             const figureModal = createFigureModal(responseData); // Création d'un élément figure pour la modal
             galleryModal.appendChild(figureModal); // Ajout de l'élément figure à la modal
-    
+
             const deleteIcon = figureModal.querySelector('.delete-icone'); // Sélection de l'icône de suppression
             deleteIcon.addEventListener('click', () => {
                 // Ajout d'un écouteur d'événement pour la suppression du projet
                 deleteProjectConfirm(responseData.id); // Appel de la fonction pour confirmer la suppression du projet
             });
-    
+
             returnToFirstModal(); // Afficher la première modal après avoir ajouté le projet
         }
     } catch (error) {
         console.error(error); // Affichage d'une erreur dans la console en cas de problème lors de l'ajout du projet
-    }    
+    }
 }
