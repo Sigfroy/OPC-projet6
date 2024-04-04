@@ -74,6 +74,21 @@ modalReturnButton.addEventListener('click', () => {
 });
 
 
+// Sélection de l'élément bouton pour fermer toutes les modales
+const modalPhotoCloseButton = document.getElementById('modal-photo-close');
+
+// Associer un événement de clic au bouton pour fermer toutes les modales
+modalPhotoCloseButton.addEventListener('click', () => {
+    // Sélection de l'élément du conteneur modal
+    const modalContainer = document.getElementById('modal-container');
+    // Masquer le conteneur modal
+    modalContainer.style.display = 'none';
+});
+
+
+
+
+
 
 
 const galleryModal = document.querySelector('.gallery-modal');
@@ -302,4 +317,14 @@ async function addProjectToBackend(event) {
     } catch (error) {
         console.error(error); // Affichage d'une erreur dans la console en cas de problème lors de l'ajout du projet
     }
+}
+
+// Fonction pour retourner à la première modale
+function returnToFirstModal() {
+    const modalContainer = document.getElementById('modal-container');
+    const modal = document.getElementById('modal');
+    const modalPhoto = document.getElementById('modal-photo');
+    modalContainer.style.display = 'block'; // Afficher le conteneur de la modal
+    modal.style.display = 'block'; // Afficher la première modal
+    modalPhoto.style.display = 'none'; // Masquer la deuxième modal
 }
