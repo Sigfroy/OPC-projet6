@@ -158,12 +158,7 @@ modify.addEventListener('click', () => {
         galleryModal.appendChild(figureModal);
     });
 
-    // Ajoutez un écouteur au bouton de fermeture de la modale principale
-    const modalClose = document.getElementById('modal-close');
-    modalClose.addEventListener('click', () => {
-        const modalContainer = document.getElementById('modal-container');
-        modalContainer.style.display = 'none';
-    });
+
 });
 
 

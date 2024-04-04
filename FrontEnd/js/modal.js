@@ -51,6 +51,13 @@ function openModal() {
     modal.style.display = 'block';
 }
 
+    // Ajoutez un écouteur au bouton de fermeture de la modale principale
+    const modalClose = document.getElementById('modal-close');
+    modalClose.addEventListener('click', () => {
+        const modalContainer = document.getElementById('modal-container');
+        modalContainer.style.display = 'none';
+    });
+
 // Sélection des éléments nécessaires
 const modal = document.getElementById('modal');
 const modalPhoto = document.getElementById('modal-photo');
@@ -168,8 +175,6 @@ fetch('http://localhost:5678/api/works')
     .catch(error => console.error('Une erreur s\'est produite lors de la récupération des projets :', error));
 
 
-// Sélection de la première modale et de la deuxième modale
-
 // Sélection de l'élément de la liste déroulante des catégories
 const categorySelect = document.getElementById('modal-photo-category');
 
@@ -256,17 +261,18 @@ function validateForm() {
     }
 }
 
-form.addEventListener('input', validateForm); // Écouteur d'événement pour vérifier le formulaire lors de la saisie
+// form.addEventListener('input', validateForm); // Écouteur d'événement pour vérifier le formulaire lors de la saisie
 
 /// Ajout de projet côté serveur
 form.addEventListener('submit', (event) => {
     event.preventDefault(); // Empêcher le comportement par défaut du formulaire
 
     addProjectToBackend(event); // Appel de la fonction pour ajouter le projet côté serveur
+    returnToFirstModal();
 });
 
 async function addProjectToBackend(event) {
-    event.preventDefault(); // Empêcher le comportement par défaut du formulaire
+    // event.preventDefault(); // Empêcher le comportement par défaut du formulaire
 
     const category = photoCategorySelect.value; // Récupération de la catégorie sélectionnée
     const title = photoTitleInput.value; // Récupération du titre de la photo
