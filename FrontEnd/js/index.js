@@ -36,6 +36,7 @@ function createFigureElement(work) {
 
 // Traite la réponse de la requête vers l'API des projets.
 
+function displayApiWorks() {
 fetch('http://localhost:5678/api/works')
     .then(async (responseApiWorks) => {
         if (!responseApiWorks.ok) {
@@ -51,6 +52,9 @@ fetch('http://localhost:5678/api/works')
             console.error("La galerie n'a pas été trouvée.");
         }
     });
+}
+
+displayApiWorks();
 
 // Traite la réponse de la requête vers l'API des catégories.
 // Crée les boutons de filtres et la classe active.
