@@ -597,19 +597,17 @@ fetch('http://localhost:5678/api/categories')
 
 // Sélection des éléments du formulaire
 const inputImage = document.getElementById('input-image');
-const photoContainer = document.getElementById('photo-container');
+const photoTitleInput = document.getElementById('modal-photo-title');
+const photoCategorySelect = document.getElementById('modal-photo-category');
+const validateButton = document.getElementById('valide-photo');
+const form = document.getElementById('form-project');
 
-// Fonction pour réinitialiser l'image sélectionnée
-function resetImage() {
-    inputImage.value = ''; // Effacer la valeur de l'input file
-    photoContainer.innerHTML = ''; // Effacer le contenu du conteneur de l'image
-}
-
-// Écouter les changements dans l'input file
-inputImage.addEventListener('change', function () {
+// Fonction pour gérer le changement d'image
+function handleImageChange() {
     const selectedImage = inputImage.files[0]; // Récupérer l'image sélectionnée
+    const photoContainer = document.getElementById('photo-container'); // Sélection du conteneur de l'image
 
-    // Effacer le contenu du conteneur de l'image
+    // Réinitialiser le contenu du conteneur de l'image
     photoContainer.innerHTML = '';
 
     if (selectedImage) {
@@ -622,8 +620,9 @@ inputImage.addEventListener('change', function () {
         // Ajouter l'image prévisualisée au conteneur de l'image
         photoContainer.appendChild(imgPreview);
     }
-});
 
+    validateForm(); // Valider le formulaire après le changement de l'image
+}
 
 // Fonction pour valider le formulaire
 function validateForm() {
@@ -639,19 +638,51 @@ function validateForm() {
     }
 }
 
-// form.addEventListener('input', validateForm); // Écouteur d'événement pour vérifier le formulaire lors de la saisie
+// Ajouter les écouteurs d'événement pour chaque champ du formulaire
+photoTitleInput.addEventListener('input', validateForm);
+photoCategorySelect.addEventListener('input', validateForm);
+inputImage.addEventListener('change', handleImageChange);
 
-/// Ajout de projet côté serveur
-form.addEventListener('submit', (event) => {
-    event.preventDefault(); // Empêcher le comportement par défaut du formulaire
+// Fonction pour réinitialiser le formulaire de la deuxième modal
+function resetModalPhoto() {
+    const photoContainer = document.getElementById('photo-container'); // Sélection du conteneur de l'image
 
-    addProjectToBackend(event); // Appel de la fonction pour ajouter le projet côté serveur
-    returnToFirstModal();
-});
+    // Réinitialiser l'état du bouton pour ajouter une nouvelle photo
+    photoContainer.innerHTML = `
+        <i class="fa-regular fa-image" id="photo-image"></i>
+        <label for="input-image" id="label-image">+ Ajouter une photo</label>
+        <input type="file" name="input-image" accept="image/png, image/jpeg, image/jpg" id="input-image" style="display: none;">
+        <p class="p-image">jpg,png : 4mo max</p>
+    `;
 
+    // Réinitialiser l'écouteur d'événement pour le champ de fichier
+    const newInputImage = document.getElementById('input-image');
+    newInputImage.addEventListener('change', handleImageChange);
+
+    // Réinitialiser les autres champs du formulaire
+    photoTitleInput.value = '';
+    photoCategorySelect.value = '';
+    validateForm(); // Valider le formulaire après la réinitialisation
+}
+
+// Fonction pour créer un élément figure pour la galerie
+function createFigureElement(work) {
+    const figure = document.createElement('figure');
+    figure.setAttribute('data-id', work.id);
+
+    const img = document.createElement('img');
+    img.src = work.imageUrl;
+    figure.appendChild(img);
+
+    const figcaption = document.createElement('figcaption');
+    figcaption.innerText = work.title;
+    figure.appendChild(figcaption);
+
+    return figure;
+}
+
+// Fonction pour ajouter un projet côté serveur
 async function addProjectToBackend(event) {
-    // event.preventDefault(); // Empêcher le comportement par défaut du formulaire
-
     const category = photoCategorySelect.value; // Récupération de la catégorie sélectionnée
     const title = photoTitleInput.value; // Récupération du titre de la photo
     const image = inputImage.files[0]; // Récupération du fichier d'image sélectionné
@@ -703,6 +734,12 @@ async function addProjectToBackend(event) {
     }
 }
 
+// Ajout de projet côté serveur
+form.addEventListener('submit', (event) => {
+    event.preventDefault(); // Empêcher le comportement par défaut du formulaire
+    addProjectToBackend(event); // Appel de la fonction pour ajouter le projet côté serveur
+});
+
 // Fonction pour retourner à la première modale
 function returnToFirstModal() {
     const modalContainer = document.getElementById('modal-container');
@@ -711,4 +748,7 @@ function returnToFirstModal() {
     modalContainer.style.display = 'block'; // Afficher le conteneur de la modal
     modal.style.display = 'block'; // Afficher la première modal
     modalPhoto.style.display = 'none'; // Masquer la deuxième modal
+
+    resetModalPhoto(); // Réinitialiser le formulaire de la deuxième modal
 }
+
