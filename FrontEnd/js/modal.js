@@ -50,7 +50,6 @@ function openModal() {
     const modal = document.getElementById('modal');
     modal.style.display = 'block';
     allApiWorks();
-    console.log("openModal");
 }
 
 // Ajoutez un écouteur au bouton de fermeture de la modale principale
@@ -72,6 +71,10 @@ addPhotoButton.addEventListener('click', () => {
     modal.style.display = 'none';
     // Afficher la deuxième modale
     modalPhoto.style.display = 'block';
+        selectedImage.value= '';
+    addPicture();
+        inputImage.value= '';
+
 });
 
 // Associer un événement de clic au bouton pour retourner à la première modale
@@ -93,11 +96,6 @@ modalPhotoCloseButton.addEventListener('click', () => {
     // Masquer le conteneur modal
     modalContainer.style.display = 'none';
 });
-
-
-
-
-
 
 
 const galleryModal = document.querySelector('.gallery-modal');
@@ -246,7 +244,21 @@ function handleImageChange() {
     }
 
     validateForm(); // Valider le formulaire après le changement de l'image
+    addPicture();
 }
+
+// Fonction pour réinitialiser le formulaire après la soumission
+// function resetForm() {
+//     inputImage.value = '';
+//     photoTitleInput.value = '';
+//     photoCategorySelect.value = '';
+//     photoImageIcon.style.display = 'block';
+//     labelImage.style.display = 'block';
+//     const previewImage = photoContainer.querySelector('img');
+//     if (previewImage) {
+//         previewImage.remove();
+//     }
+// }
 
 // Fonction pour valider le formulaire
 function validateForm() {
@@ -271,13 +283,14 @@ inputImage.addEventListener('change', handleImageChange);
 function resetModalPhoto() {
     const photoContainer = document.getElementById('photo-container'); // Sélection du conteneur de l'image
 
-    // Réinitialiser l'état du bouton pour ajouter une nouvelle photo
-    photoContainer.innerHTML = `
-        <i class="fa-regular fa-image" id="photo-image"></i>
-        <label for="input-image" id="label-image">+ Ajouter une photo</label>
-        <input type="file" name="input-image" accept="image/png, image/jpeg, image/jpg" id="input-image" style="display: none;">
-        <p class="p-image">jpg,png : 4mo max</p>
-    `;
+    // // Réinitialiser l'état du bouton pour ajouter une nouvelle photo
+    // photoContainer.innerHTML = `
+    //     <i class="fa-regular fa-image" id="photo-image"></i>
+    //     <label for="input-image" id="label-image">+ Ajouter une photo</label>
+    //     <input type="file" name="input-image" accept="image/png, image/jpeg, image/jpg" id="input-image" style="display: none;">
+    //     <p class="p-image">jpg,png : 4mo max</p>
+    // `;
+    // addPicture();
 
     // Réinitialiser l'écouteur d'événement pour le champ de fichier
     const newInputImage = document.getElementById('input-image');
@@ -287,6 +300,17 @@ function resetModalPhoto() {
     photoTitleInput.value = '';
     photoCategorySelect.value = '';
     validateForm(); // Valider le formulaire après la réinitialisation
+    photoContainer.innerHTML= '';
+}
+
+function addPicture() {
+    photoContainer.innerHTML = `
+<i class="fa-regular fa-image" id="photo-image"></i>
+<label for="input-image" id="label-image">+ Ajouter une photo</label>
+<input type="file" name="input-image" accept="image/png, image/jpeg, image/jpg" id="input-image" style="display: none;">
+<p class="p-image">jpg,png : 4mo max</p>
+`;
+
 }
 
 // Fonction pour créer un élément figure pour la galerie
@@ -352,6 +376,7 @@ async function addProjectToBackend(event) {
             });
 
             returnToFirstModal(); // Afficher la première modal après avoir ajouté le projet
+            // resetForm();
         }
     } catch (error) {
         console.error(error); // Affichage d'une erreur dans la console en cas de problème lors de l'ajout du projet
