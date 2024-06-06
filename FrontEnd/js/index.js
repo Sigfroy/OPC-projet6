@@ -37,21 +37,21 @@ function createFigureElement(work) {
 // Traite la réponse de la requête vers l'API des projets.
 
 function displayApiWorks() {
-fetch('http://localhost:5678/api/works')
-    .then(async (responseApiWorks) => {
-        if (!responseApiWorks.ok) {
-            throw new Error('Erreur lors de la récupération des projets');
-        }
+    fetch('http://localhost:5678/api/works')
+        .then(async (responseApiWorks) => {
+            if (!responseApiWorks.ok) {
+                throw new Error('Erreur lors de la récupération des projets');
+            }
 
-        const data = await responseApiWorks.json();
+            const data = await responseApiWorks.json();
 
-        if (gallery) {
-            allWorks = data;
-            displayWorks(allWorks);
-        } else {
-            console.error("La galerie n'a pas été trouvée.");
-        }
-    });
+            if (gallery) {
+                allWorks = data;
+                displayWorks(allWorks);
+            } else {
+                console.error("La galerie n'a pas été trouvée.");
+            }
+        });
 }
 
 displayApiWorks();
@@ -181,15 +181,15 @@ if (JSON.parse(sessionStorage.getItem('connected'))) {
     admin.style.display = 'none';
     modify.style.display = 'none';
     header.style.marginTop = '0'; // Réinitialiser la marge supérieure si l'utilisateur n'est pas connecté
-    }
-    
-    // Ajoute un écouteur d'événement au bouton de déconnexion.
-    logout.addEventListener('click', (event) => {
+}
+
+// Ajoute un écouteur d'événement au bouton de déconnexion.
+logout.addEventListener('click', (event) => {
     // Empêche le comportement par défaut du bouton de déconnexion.
     event.preventDefault();
 
     // Supprime les informations de session et redirige vers la page d'accueil.
-sessionStorage.removeItem('Token');
-sessionStorage.removeItem('connected');
-window.location.replace('index.html');
+    sessionStorage.removeItem('Token');
+    sessionStorage.removeItem('connected');
+    window.location.replace('index.html');
 });
